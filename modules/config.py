@@ -8,7 +8,9 @@ def load_env():
     load_dotenv()
 
     required_vars = {
-        "CLIENT_TOKEN",
+        "BOT_TOKEN",
+        "SUPABASE_URL",
+        "SUPABASE_TOKEN",
     }
 
     for var in required_vars:

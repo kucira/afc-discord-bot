@@ -2,12 +2,13 @@ import discord
 import os
 from modules import config
 from modules.discord.views.intro_register import IntroRegister
+from modules.api import setup
 
 config.load_env()
 
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
-token = os.getenv("CLIENT_TOKEN")
+token = os.getenv("BOT_TOKEN")
 
 @client.event
 async def on_ready() -> None:
@@ -16,9 +17,8 @@ async def on_ready() -> None:
 
 @client.event
 async def on_member_join(member):
-    channel = discord.utils.get(member.guild.text_channels, name='info')
-    if channel:
-        await channel.send(f'{member.display_name} has joined the server!')
+    data, count = setup.get_supabase().table('discord_users').insert({"discord_user_id": member.id, "discord_user_name": member.name}).execute()
+    
         
 @client.event  
 async def on_member_remove(member):
