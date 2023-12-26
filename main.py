@@ -2,32 +2,45 @@ import discord
 import os
 from modules import config
 from modules.discord.views.intro_register import IntroRegister
-from modules.api import setup
-
+from modules.api import supabase
+from modules.api import register
 config.load_env()
 
 intents = discord.Intents.all()
-client = discord.Client(intents=intents)
+bot = discord.Client(intents=intents)
 token = os.getenv("BOT_TOKEN")
+supabase_instance = supabase.get_supabase()
+res = supabase.sign_in_bot(supabase_instance)
 
-@client.event
+@bot.event
 async def on_ready() -> None:
     # bot ready and get the login user information and save to database
-    print("successful login as {0.user}".format(client))
+    print("bot successful login as {0.user}".format(bot))
+    # if res.user.id:
+    #     print(res.user)
+    #     guild = bot.get_guild(1187236756236554330)
+    #     async for member in guild.fetch_members(limit=None):
+    #         if not member.bot:
+    #             user = register.create_user(member, supabase_instance)
+    #             print(user)
 
-@client.event
+@bot.event
 async def on_member_join(member):
-    data, count = setup.get_supabase().table('discord_users').insert({"discord_user_id": member.id, "discord_user_name": member.name}).execute()
-    
-        
-@client.event  
-async def on_member_remove(member):
-    pass
+    # Add user to database
+    user = register.create_user(member, supabase_instance)
+    print("add user", user)
 
-@client.event
+
+@bot.event  
+async def on_member_remove(member):
+    # Remove user from database
+    user = register.delete_user(member, supabase_instance)
+    print("delete user", user)
+
+@bot.event
 async def on_message(message: discord.Message) -> None:
     #check who sent the message
-    if message.author == client.user:
+    if message.author == bot.user:
         return
     msg = message.content
     if msg.startswith('hello'):
@@ -41,4 +54,4 @@ async def on_message(message: discord.Message) -> None:
         intro_register = IntroRegister()
         await message.channel.send(embed=embed, view=intro_register)
 
-client.run(token)
+bot.run(token)

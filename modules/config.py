@@ -10,7 +10,9 @@ def load_env():
     required_vars = {
         "BOT_TOKEN",
         "SUPABASE_URL",
-        "SUPABASE_TOKEN",
+        "SUPABASE_URL",
+        "SUPABASE_USER",
+        "SUPABASE_PASSWORD",
     }
 
     for var in required_vars:
