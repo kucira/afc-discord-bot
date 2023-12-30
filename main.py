@@ -51,7 +51,7 @@ async def on_message(message: discord.Message) -> None:
         embed = discord.Embed(title="My Title", description="My Description", color=0x0000FF)
         embed.set_image(url="https://example.com/image.png")
 
-        intro_register = IntroRegister()
+        intro_register = IntroRegister(member=message.author, bot=bot)
         await message.channel.send(embed=embed, view=intro_register)
 
 bot.run(token)
