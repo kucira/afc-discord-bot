@@ -2,6 +2,7 @@ import discord
 import os
 from modules import config
 from modules.discord.views.intro_register import IntroRegister
+from modules.discord.views.register_form import RegisterForm
 from modules.api import supabase
 from modules.api import register
 config.load_env()
