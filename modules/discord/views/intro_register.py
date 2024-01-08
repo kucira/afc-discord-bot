@@ -4,10 +4,11 @@ from modules.discord.channels import manage
 from modules.discord.views.register_form import RegisterForm
 
 class IntroRegister(ui.View):
-    def __init__(self, member, bot):
+    def __init__(self, member, bot, supabase_instance):
         super().__init__()
         self.member = member
         self.bot = bot
+        self.supabase_instance = supabase_instance
 
     @ui.button(label="Register Application", style=discord.ButtonStyle.green)
     async def register_btn_callback(self, interaction: discord.Interaction, button: ui.Button):
@@ -17,7 +18,7 @@ class IntroRegister(ui.View):
         # await thread.send("Please register your application")
         # await interaction.response.send_message("Check your notification to register you application")
         
-        register_form = RegisterForm(member=self.member, bot=self.bot)
+        register_form = RegisterForm(supabase_instance=self.supabase_instance)
         await interaction.response.send_modal(register_form)
         # await thread.send(view=register_form)
 

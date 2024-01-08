@@ -1,17 +1,17 @@
 import discord
 from discord import ui
-
+from modules.api import app
 class RegisterForm(ui.Modal, title="Register Form"):
-    def __init__(self, member, bot):
+    name = ui.TextInput(label='Application Name')
+    guide = ui.TextInput(label='Guide to test', style=discord.TextStyle.paragraph)
+
+    def __init__(self, supabase_instance):
         super().__init__()
-        self.member = member
-        self.bot = bot
+        self.supabase_instance = supabase_instance
 
-        name = ui.TextInput(label='Name')
-        answer = ui.TextInput(label='Answer', style=discord.TextStyle.paragraph)
-
-        self.add_item(name)
-        self.add_item(answer)
-        
-        async def on_submit(self, interaction: discord.Interaction):
-            await interaction.response.send_message(f'Thanks for your response, {self.name}!', ephemeral=True)
+    async def on_submit(self, interaction: discord.Interaction):
+        try:
+            app.create_app(self.name, self.guide, interaction.user, self.supabase_instance)
+            await interaction.response.send_message(f'Thanks for your response, {self.name} {self.guide}!', ephemeral=True)    
+        except Exception as e:
+            print(e)
